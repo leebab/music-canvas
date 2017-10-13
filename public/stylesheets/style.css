@@ -45,8 +45,12 @@ a {
 .left ul{
   overflow: auto;
 }
+.left ul li{
+  cursor: pointer;
+}
 .left ul li.selected{
-  color: pink;
+  color:pink;
+
 }
 .right{
   top: 170px;

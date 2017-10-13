@@ -14,6 +14,9 @@ for(var i= 0 ; i < list.length ; i++){
 
 var xhr = new XMLHttpRequest();//创建一个ajax对象
 var ac = new (window.AudioContext||window.webkitAudioContext)();
+var gainNode = ac[ac.createGain?'createGain':'createGainNode']();
+gainNode.connect(ac.destination)//将gainNode连接到destination上
+
 function load(url){
     xhr.open('GET',url)
     xhr.responseType='arraybuffer'//arraybuffer理解为服务器返回的音频数据以二进制数据形式
@@ -22,7 +25,7 @@ function load(url){
             //解码成功后，播放
             var bufferSource = ac.createBufferSource();
             bufferSource.buffer= buffer;
-            bufferSource.connect(ac.destination)
+            bufferSource.connect(gainNode)//由于gainNode已经连上了destination,所以bufferSource直接连接gainNode即可
             bufferSource[bufferSource.start?'start':'noteOn'](0);
        },function(err){
             console.log(err)
@@ -30,3 +33,12 @@ function load(url){
     }
     xhr.send()
 }
+
+function changeVolume(precent){
+    gainNode.gain.value = precent * precent;
+}
+
+$('#volume')[0].onchange=function(){
+    changeVolume(this.value/this.max)
+}
+$('#volume')[0].onchange()    

@@ -24,6 +24,20 @@ analyser.connect(gainNode)
 
 var source = null;
 var count = 0;
+
+var height,width;
+var box = $('#box')[0]
+var canvas = document.createElement('canvas')
+box.appendChild(canvas)
+function reasize(){
+    height = box.clientHeight;
+    width = box.clientWidth;
+    canvas.height=height;
+    canvas.width = width;
+}
+reasize()
+window.onresize = reasize;
+
 function load(url){
     var n = ++count;
     source && source[source.stop?'stop':'noteOff']();

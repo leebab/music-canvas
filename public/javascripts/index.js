@@ -40,7 +40,7 @@ function load(url){
             bufferSource.connect(analyser)//bufferSource连接analyser,analyser连接gainNode,gainNode连接des...上
             bufferSource[bufferSource.start?'start':'noteOn'](0);
             source = bufferSource;
-            visualizer();
+            
         },function(err){
             console.log(err)
        })
@@ -51,11 +51,20 @@ function load(url){
 //analyser 得到的数据
 function visualizer(){
     var arr = new Uint8Array(analyser.frequencyBinCount);//定义一个数组，
-    analyser.getByteFrequencyData(arr);//将分析的数据赋值到数组中，
-    console.log(arr)
+   
+    //requestAnimationFrame 通过在浏览器重绘的时候，通知函数执行，
+    requestAnimationFrame = window.requestAnimationFrame  ||
+                            window.wekitRequestAnimationFrame ||
+                            window.mozRequestAnimationFrame;
+    function v(){
+        analyser.getByteFrequencyData(arr);//将分析的数据赋值到数组中，
+        requestAnimationFrame(v)
+        console.log(arr)
+    }
+    requestAnimationFrame(v)
 }
 
-
+visualizer();
 function changeVolume(precent){
     gainNode.gain.value = precent * precent;
 }

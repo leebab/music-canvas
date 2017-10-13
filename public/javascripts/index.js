@@ -13,11 +13,20 @@ for(var i= 0 ; i < list.length ; i++){
 }
 
 var xhr = new XMLHttpRequest();//创建一个ajax对象
+var ac = new (window.AudioContext||window.webkitAudioContext)();
 function load(url){
-    xhr.open('GET',url)//打开请求
-    xhr.responseType='arraybuffer'//数据类型，arraybuffer理解为服务器返回的音频数据以二进制数据形式
+    xhr.open('GET',url)
+    xhr.responseType='arraybuffer'//arraybuffer理解为服务器返回的音频数据以二进制数据形式
     xhr.onload = function(){//请求成功后调用的事件处理程序
-        console.log(xhr.response)
+       ac.decodeAudioData(xhr.response,function(buffer){//调用decodeAudioData进行解码
+            //解码成功后，播放
+            var bufferSource = ac.createBufferSource();
+            bufferSource.buffer= buffer;
+            bufferSource.connect(ac.destination)
+            bufferSource[bufferSource.start?'start':'noteOn'](0);
+       },function(err){
+            console.log(err)
+       })
     }
-    xhr.send()//发送请求
+    xhr.send()
 }

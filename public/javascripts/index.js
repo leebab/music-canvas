@@ -14,8 +14,13 @@ for(var i= 0 ; i < list.length ; i++){
 
 var xhr = new XMLHttpRequest();//创建一个ajax对象
 var ac = new (window.AudioContext||window.webkitAudioContext)();
+
 var gainNode = ac[ac.createGain?'createGain':'createGainNode']();
 gainNode.connect(ac.destination)//将gainNode连接到destination上
+
+var analyser = ac.createAnalyser();//分析音频
+analyser.fftSize=512;
+analyser.connect(gainNode)
 
 var source = null;
 var count = 0;
@@ -32,15 +37,24 @@ function load(url){
             if(n!=count)return ;
             var bufferSource = ac.createBufferSource();
             bufferSource.buffer= buffer;
-            bufferSource.connect(gainNode)//由于gainNode已经连上了destination,所以bufferSource直接连接gainNode即可
+            bufferSource.connect(analyser)//bufferSource连接analyser,analyser连接gainNode,gainNode连接des...上
             bufferSource[bufferSource.start?'start':'noteOn'](0);
             source = bufferSource;
+            visualizer();
         },function(err){
             console.log(err)
        })
     }
     xhr.send()
 }
+
+//analyser 得到的数据
+function visualizer(){
+    var arr = new Uint8Array(analyser.frequencyBinCount);//定义一个数组，
+    analyser.getByteFrequencyData(arr);//将分析的数据赋值到数组中，
+    console.log(arr)
+}
+
 
 function changeVolume(precent){
     gainNode.gain.value = precent * precent;

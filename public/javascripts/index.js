@@ -12,6 +12,16 @@ for(var i= 0 ; i < list.length ; i++){
     }
 }
 
+var types = $('#type li');
+for(var i=0 ;i < types.length;i++){
+    types[i].onclick=function(){
+        for(var j=0;j<types.length;j++){
+            types[j].className=''
+        }
+        this.className='selected'
+    }
+}
+
 var xhr = new XMLHttpRequest();//创建一个ajax对象
 var ac = new (window.AudioContext||window.webkitAudioContext)();
 
@@ -41,9 +51,9 @@ function reasize(){
     canvas.height=height;
     canvas.width = width;
     var line = ctx.createLinearGradient(0,0,0,height);//线性渐变
-    line.addColorStop(0,'red')
-    line.addColorStop(0.5,'yellow')
-    line.addColorStop(1,'green')
+    line.addColorStop(0,'#fff')
+    // line.addColorStop(0.2,'pink')
+    line.addColorStop(1,'#fff')
     ctx.fillStyle=line;
 }
 reasize()
@@ -54,7 +64,7 @@ function draw(arr){
     var w = width / size;
     for(var i=0;i<size;i++){
         var h = arr[i] /256 * height;//比例
-        ctx.fillRect(w*i ,height-h,w * 0.6,h  );
+        ctx.fillRect(w*i ,height-h,w * 0.8,h  );
     }
 }
 

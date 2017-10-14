@@ -12,15 +12,7 @@ for(var i= 0 ; i < list.length ; i++){
     }
 }
 
-var types = $('#type li');
-for(var i=0 ;i < types.length;i++){
-    types[i].onclick=function(){
-        for(var j=0;j<types.length;j++){
-            types[j].className=''
-        }
-        this.className='selected'
-    }
-}
+
 
 var xhr = new XMLHttpRequest();//创建一个ajax对象
 var ac = new (window.AudioContext||window.webkitAudioContext)();
@@ -44,29 +36,79 @@ var canvas = document.createElement('canvas')
 var ctx = canvas.getContext('2d');
 box.appendChild(canvas)
 
-
+var line;
 function reasize(){
     height = box.clientHeight;
     width = box.clientWidth;
     canvas.height=height;
     canvas.width = width;
-    var line = ctx.createLinearGradient(0,0,0,height);//线性渐变
+    line = ctx.createLinearGradient(0,0,0,height);//线性渐变
     line.addColorStop(0,'#fff')
     // line.addColorStop(0.2,'pink')
     line.addColorStop(1,'#fff')
-    ctx.fillStyle=line;
+  
+    getDots();//每次窗口改变时，点也随之改变
 }
 reasize()
 window.onresize = reasize;
 
+var dots=[];
+function random(m,n){//获取m-n之间的随机整数
+    return Math.round(Math.random()*( n- m ) + m);
+}
+
+function getDots(){
+    dots = [];
+    for(var i=0;i<size ;i++){
+        var x = random(0,width);
+        var y = random(0,height);
+        var color = '#fff';
+        dots.push({
+            x:x,
+            y:y,
+            color:color
+        })
+    }
+}
+
+getDots()
 function draw(arr){
     ctx.clearRect(0,0,width,height);//画之前将之前的清除
     var w = width / size;
+    ctx.fillStyle=line;
     for(var i=0;i<size;i++){
-        var h = arr[i] /256 * height;//比例
-        ctx.fillRect(w*i ,height-h,w * 0.8,h  );
+        if(draw.type == 'column'){
+            var h = arr[i] /256 * height;//比例
+            ctx.fillRect(w*i ,height-h,w * 0.8,h  );
+        }else if(draw.type== 'dot'){
+            ctx.beginPath();
+            var o = dots[i];
+            var r = arr[i] / 256 * 30 ;
+            ctx.arc(o.x,o.y,r,0,Math.PI * 2 ,true );
+            var g = ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,r);
+            g.addColorStop(0,'rgba(255,255,255,0.8)')
+            g.addColorStop(1,'#fff')
+            
+            ctx.fillStyle=g;
+            ctx.fill()
+            // ctx.strokeStyle='#fff'
+            // ctx.stroke();
+        }
     }
 }
+
+draw.type = 'column'
+var types = $('#type li');
+for(var i=0 ;i < types.length;i++){
+    types[i].onclick=function(){
+        for(var j=0;j<types.length;j++){
+            types[j].className=''
+        }
+        this.className='selected'
+        draw.type = this.getAttribute('data-type');
+    }
+}
+
 
 function load(url){
     var n = ++count;

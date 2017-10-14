@@ -19,7 +19,10 @@ var gainNode = ac[ac.createGain?'createGain':'createGainNode']();
 gainNode.connect(ac.destination)//将gainNode连接到destination上
 
 var analyser = ac.createAnalyser();//分析音频
-analyser.fftSize=512;
+
+var size = 128
+
+analyser.fftSize=size * 2;
 analyser.connect(gainNode)
 
 var source = null;
@@ -28,15 +31,32 @@ var count = 0;
 var height,width;
 var box = $('#box')[0]
 var canvas = document.createElement('canvas')
+var ctx = canvas.getContext('2d');
 box.appendChild(canvas)
+
+
 function reasize(){
     height = box.clientHeight;
     width = box.clientWidth;
     canvas.height=height;
     canvas.width = width;
+    var line = ctx.createLinearGradient(0,0,0,height);//线性渐变
+    line.addColorStop(0,'red')
+    line.addColorStop(0.5,'yellow')
+    line.addColorStop(1,'green')
+    ctx.fillStyle=line;
 }
 reasize()
 window.onresize = reasize;
+
+function draw(arr){
+    ctx.clearRect(0,0,width,height);//画之前将之前的清除
+    var w = width / size;
+    for(var i=0;i<size;i++){
+        var h = arr[i] /256 * height;//比例
+        ctx.fillRect(w*i ,height-h,w * 0.6,h  );
+    }
+}
 
 function load(url){
     var n = ++count;
@@ -73,7 +93,7 @@ function visualizer(){
     function v(){
         analyser.getByteFrequencyData(arr);//将分析的数据赋值到数组中，
         requestAnimationFrame(v)
-        console.log(arr)
+        draw(arr)
     }
     requestAnimationFrame(v)
 }

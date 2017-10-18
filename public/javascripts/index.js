@@ -72,10 +72,11 @@ function getDots(){
     for(var i=0;i<size ;i++){
         var x = random(0,width);
         var y = random(0,height);
-        var color = '#fff';
+        var color = 'rgba('+random(0,255)+','+random(0,255)+','+random(0,255)+',0)';
         dots.push({
             x:x,
             y:y,
+            dx:random(1,4),
             color:color,
             cap:0
         })
@@ -104,16 +105,15 @@ function draw(arr){
             }
         }else if(draw.type== 'dot'){ 
             ctx.beginPath();
-            var r = arr[i] / 256 * 30 ;
+            var r = 5 + arr[i] / 256 * (height>width?width:height)/20;
             ctx.arc(o.x,o.y,r,0,Math.PI * 2 ,true );
             var g = ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,r);
-            g.addColorStop(0,'rgba(255,255,255,0.8)')
-            g.addColorStop(1,'#fff')
-            
+            g.addColorStop(0,'#fff')          
+            g.addColorStop(1,o.color)
             ctx.fillStyle=g;
             ctx.fill()
-            // ctx.strokeStyle='#fff'
-            // ctx.stroke();
+            o.x += o.dx;
+            o.x = o.x >width?0:o.x;
         }
     }
 }

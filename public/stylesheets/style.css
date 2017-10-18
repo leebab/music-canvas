@@ -89,3 +89,34 @@ a {
   left: 220px;
 }
 
+input[type="range"]{/*滑槽*/
+  -webkit-appearance: none;/* 取消默认样式  */
+  height: 8px;
+  background: rgba(255,255,255, 0.4);
+  border-radius: 10px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb{/* 滑块 */
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  background: #fff;
+  border-radius: 100%;
+}
+
+/* 火狐的写法 */
+input[type="range"]::-moz-range-track{
+  -webkit-appearance: none;
+  height: 8px;
+  background: rgba(255,255,255, 0.4);
+  border-radius: 10px;
+  outline: none;
+}
+input[type="range"]::-moz-range-thumb{
+  -webkit-appearance: none;
+  height: 8px;
+  background: rgba(255,255,255, 0.4);
+  border-radius: 10px;
+  outline: none;
+}
